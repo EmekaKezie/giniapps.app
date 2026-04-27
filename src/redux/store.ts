@@ -3,7 +3,6 @@ import { persistReducer, persistStore } from "redux-persist";
 import storage from "redux-persist/es/storage";
 import ztestSlice from "./slices/zestSlice";
 import themeSlice from "./slices/themeSlice";
-import builderSlice from "./slices/builderSlice";
 
 const persistConfig = {
   key: "root",
@@ -15,7 +14,6 @@ const persistConfig = {
 const reducers = combineReducers({
   ztestReducer: ztestSlice,
   themeReducer: themeSlice,
-  builderReducer: builderSlice,
 });
 
 const persistedReducer = persistReducer(persistConfig, reducers);

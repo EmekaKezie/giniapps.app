@@ -74,7 +74,7 @@ export default function AuthDrawer({
               color: "text.primary",
               fontSize: "1.25rem",
             }}>
-            Gini Apps
+            Ginimeg Apps
           </Typography>
         </Stack>
       </Box>
