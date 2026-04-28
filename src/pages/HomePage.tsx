@@ -10,445 +10,338 @@ import {
   alpha,
   AppBar,
   Toolbar,
-  Divider,
-  Link,
-  IconButton,
   Avatar,
+  Chip,
+  useMediaQuery,
 } from "@mui/material";
 import {
-  FlashOn,
+  Terminal,
   Security,
-  AutoGraph,
+  Hub,
   ArrowForward,
-  DescriptionOutlined,
-  Twitter,
-  LinkedIn,
-  GitHub,
-  MailOutline,
-  LocationOnOutlined,
+  Dashboard,
+  SettingsSuggest,
+  Dns,
+  Code,
+  ShieldMoon,
 } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 
-const FEATURES = [
+const SYSTEM_STATS = [
+  { label: "Active Apps", value: "24", icon: <Dashboard fontSize="small" /> },
   {
-    title: "Instant Invoicing",
-    desc: "Create and send professional invoices in under 60 seconds.",
-    icon: <FlashOn color="primary" />,
+    label: "Total Licenses",
+    value: "1.2k",
+    icon: <Security fontSize="small" />,
+  },
+  { label: "API Health", value: "99.9%", icon: <Dns fontSize="small" /> },
+];
+
+const DEV_TOOLS = [
+  {
+    title: "License Engine",
+    desc: "Generate and validate Ed25519 signatures for internal apps.",
+    icon: <ShieldMoon color="primary" />,
+    path: "/licenses",
   },
   {
-    title: "Secure Payments",
-    desc: "Get paid directly via Stripe, PayPal, or Bank Transfer.",
-    icon: <Security color="primary" />,
+    title: "App Registry",
+    desc: "Manage API keys, app codes, and environment configurations.",
+    icon: <Terminal color="primary" />,
+    path: "/apps",
   },
   {
-    title: "Smart Tracking",
-    desc: "Know exactly when a client opens, views, and pays your invoice.",
-    icon: <AutoGraph color="primary" />,
+    title: "System Logs",
+    desc: "Monitor real-time access logs and license validation attempts.",
+    icon: <Hub color="primary" />,
+    path: "/logs",
   },
 ];
 
 export default function HomePage() {
   const theme = useTheme();
   const navigate = useNavigate();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   return (
-    <Box
-      sx={{
-        bgcolor: "background.default",
-        minHeight: "100vh",
-        color: "text.primary",
-      }}>
-      {/* 1. NAVBAR */}
+    <Box sx={{ bgcolor: "background.default", minHeight: "100vh" }}>
+      {/* 1. INTERNAL NAVBAR */}
       <AppBar
         position="sticky"
         elevation={0}
         sx={{
-          bgcolor: alpha(theme.palette.background.default, 0.8),
-          backdropFilter: "blur(10px)",
+          bgcolor: alpha(theme.palette.background.default, 0.9),
+          backdropFilter: "blur(12px)",
           borderBottom: "1px solid",
           borderColor: "divider",
         }}>
-        <Container maxWidth="lg">
+        <Container maxWidth="xl">
           <Toolbar sx={{ justifyContent: "space-between", px: "0 !important" }}>
-            <Stack direction="row" spacing={1} alignItems="center">
-              <Box
-                sx={{
-                  width: 32,
-                  height: 32,
-                  bgcolor: "primary.main",
-                  borderRadius: 1,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}>
-                <DescriptionOutlined sx={{ color: "white", fontSize: 20 }} />
-              </Box>
-              <Typography variant="h6" fontWeight={800} color="text.primary">
-                Ginivo
+            <Stack
+              direction="row"
+              spacing={isMobile ? 1 : 2}
+              alignItems="center">
+              <Avatar
+                variant="rounded"
+                sx={{ bgcolor: "primary.main", width: 32, height: 32 }}>
+                <SettingsSuggest sx={{ fontSize: 20 }} />
+              </Avatar>
+              <Typography
+                variant={isMobile ? "subtitle2" : "h6"}
+                fontWeight={800}
+                sx={{ letterSpacing: -0.5 }}>
+                GINIAPPS{" "}
+                {!isMobile && (
+                  <span style={{ fontWeight: 400, opacity: 0.6 }}>
+                    Internal
+                  </span>
+                )}
               </Typography>
+              {!isMobile && (
+                <Chip
+                  label="v2.4.0-stable"
+                  size="small"
+                  variant="outlined"
+                  sx={{ ml: 1, height: 20, fontSize: 10 }}
+                />
+              )}
             </Stack>
-            <Stack direction="row" spacing={2}>
-              {/* <Button
-                sx={{ fontWeight: 600 }}
-                onClick={() => navigate("/authourize")}>
-                Login
-              </Button> */}
+
+            <Stack direction="row" spacing={1} alignItems="center">
+              {!isMobile && (
+                <Button
+                  size="small"
+                  color="inherit"
+                  onClick={() => navigate("/apps")}>
+                  Registry
+                </Button>
+              )}
               <Button
                 variant="contained"
-                sx={{ borderRadius: 2, fontWeight: 700, px: 3 }}
-                onClick={() => navigate("/auth/login/authourize")}>
-                Get Started
+                size={isMobile ? "small" : "medium"}
+                disableElevation
+                sx={{ borderRadius: 1.5, fontWeight: 700 }}
+                onClick={() => navigate("/apps")}>
+                Console
               </Button>
             </Stack>
           </Toolbar>
         </Container>
       </AppBar>
 
-      {/* 2. HERO SECTION */}
+      {/* 2. CONSOLE HERO SECTION */}
       <Box
         sx={{
-          pt: { xs: 10, md: 15 },
-          pb: { xs: 5, md: 8 },
-          textAlign: "center",
+          pt: { xs: 6, md: 10 },
+          pb: { xs: 4, md: 6 },
           position: "relative",
+          overflow: "hidden",
         }}>
         <Box
           sx={{
             position: "absolute",
-            top: -100,
-            left: "50%",
-            transform: "translateX(-50%)",
-            width: 600,
-            height: 400,
-            background: `radial-gradient(circle, ${alpha(theme.palette.primary.main, 0.1)} 0%, transparent 70%)`,
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundImage: `linear-gradient(${alpha(theme.palette.divider, 0.1)} 1px, transparent 1px), linear-gradient(90deg, ${alpha(theme.palette.divider, 0.1)} 1px, transparent 1px)`,
+            backgroundSize: "40px 40px",
+            maskImage:
+              "radial-gradient(ellipse at center, black, transparent 80%)",
             zIndex: 0,
           }}
         />
-        <Container maxWidth="md" sx={{ position: "relative", zIndex: 1 }}>
-          <Typography
-            variant="overline"
-            sx={{ fontWeight: 800, color: "primary.main", letterSpacing: 2 }}>
-            SIMPLE INVOICING FOR MODERN TEAMS
-          </Typography>
-          <Typography
-            variant="h1"
-            sx={{
-              fontSize: { xs: "3rem", md: "5.5rem" },
-              fontWeight: 900,
-              mb: 3,
-              mt: 1,
-              lineHeight: 1.1,
-            }}>
-            Get paid{" "}
-            <span style={{ color: theme.palette.primary.main }}>on time</span>,{" "}
-            <br />
-            every time.
-          </Typography>
-          <Typography
-            variant="h5"
-            color="text.secondary"
-            sx={{ mb: 6, fontWeight: 400, maxWidth: 650, mx: "auto" }}>
-            Ginivo simplifies your billing so you can focus on growing your
-            business. No complex accounting, just beautiful invoices.
-          </Typography>
-          <Stack
-            direction={{ xs: "column", sm: "row" }}
-            spacing={2}
-            justifyContent="center">
-            <Button
-              variant="contained"
-              size="large"
-              endIcon={<ArrowForward />}
+
+        <Container maxWidth="lg" sx={{ position: "relative", zIndex: 1 }}>
+          <Stack alignItems="center" spacing={3} textAlign="center">
+            <Typography
+              variant="overline"
               sx={{
-                height: 60,
-                px: 4,
-                borderRadius: 3,
-                fontSize: "1.1rem",
                 fontWeight: 800,
+                color: "primary.main",
+                letterSpacing: { xs: 1.5, md: 3 },
+                bgcolor: alpha(theme.palette.primary.main, 0.1),
+                px: 2,
+                borderRadius: 10,
+                fontSize: { xs: "0.65rem", md: "0.75rem" },
               }}>
-              Start Free Trial
-            </Button>
-            <Button
-              variant="outlined"
-              size="large"
+              IN-HOUSE CENTRAL COMMAND
+            </Typography>
+
+            <Typography
+              variant="h2"
+              fontWeight={900}
+              sx={{ lineHeight: 1.1, fontSize: { xs: "2rem", md: "4rem" } }}>
+              Manage Giniapps <br /> Ecosystem.
+            </Typography>
+
+            <Typography
+              variant="body1"
+              color="text.secondary"
               sx={{
-                height: 60,
-                px: 4,
-                borderRadius: 3,
-                fontSize: "1.1rem",
-                fontWeight: 700,
+                maxWidth: 600,
+                fontWeight: 400,
+                px: 2,
+                fontSize: { xs: "0.9rem", md: "1.1rem" },
               }}>
-              View Demo
-            </Button>
+              The unified engine for license orchestration, API security, and
+              application lifecycle management for Ginimeg Technology.
+            </Typography>
+
+            <Stack
+              direction={{ xs: "column", sm: "row" }}
+              spacing={2}
+              sx={{ width: { xs: "100%", sm: "auto" }, px: 4 }}>
+              <Button
+                variant="contained"
+                size="large"
+                fullWidth={isMobile}
+                onClick={() => navigate("/apps")}
+                endIcon={<ArrowForward />}
+                sx={{ height: 54, px: 4, borderRadius: 2, fontWeight: 800 }}>
+                Go to Registry
+              </Button>
+              <Button
+                variant="outlined"
+                size="large"
+                fullWidth={isMobile}
+                startIcon={<Code />}
+                sx={{ height: 54, px: 4, borderRadius: 2, fontWeight: 700 }}>
+                Docs
+              </Button>
+            </Stack>
           </Stack>
-        </Container>
-      </Box>
 
-      {/* 3. DASHBOARD PREVIEW */}
-      {/* <Container maxWidth="lg" sx={{ mb: 15 }}>
-        <Card sx={{ borderRadius: 6, overflow: "hidden", boxShadow: "0 40px 100px rgba(0,0,0,0.12)", border: "1px solid", borderColor: "divider" }}>
-          <Box
-            component="img"
-            src="http://googleusercontent.com/image_collection/image_retrieval/7532154608319607974_0"
-            alt="Ginivo Dashboard Interface"
-            sx={{ width: "100%", height: "auto", display: "block" }}
-          />
-        </Card>
-      </Container> */}
-
-      {/* 4. FEATURES SECTION */}
-      <Box sx={{ bgcolor: alpha(theme.palette.primary.main, 0.03), py: 15 }}>
-        <Container maxWidth="lg">
-          <Grid container spacing={6}>
-            {FEATURES.map((feature, index) => (
-              <Grid key={index} size={{ xs: 12, md: 4 }}>
-                <Stack spacing={2}>
-                  <Box
-                    sx={{
-                      width: 56,
-                      height: 56,
-                      borderRadius: 2,
-                      bgcolor: "white",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      boxShadow: "0 10px 20px rgba(0,0,0,0.05)",
-                    }}>
-                    {feature.icon}
-                  </Box>
-                  <Typography variant="h5" fontWeight={800}>
-                    {feature.title}
-                  </Typography>
-                  <Typography variant="body1" color="text.secondary">
-                    {feature.desc}
-                  </Typography>
-                </Stack>
+          {/* 3. QUICK SYSTEM STATS */}
+          <Grid container spacing={2} sx={{ mt: { xs: 4, md: 8 } }}>
+            {SYSTEM_STATS.map((stat, i) => (
+              <Grid size={{xs:12, sm:4}} key={i}>
+                <Card
+                  variant="outlined"
+                  sx={{
+                    p: 2,
+                    borderRadius: 2,
+                    bgcolor: alpha(theme.palette.background.paper, 0.5),
+                  }}>
+                  <Stack direction="row" spacing={2} alignItems="center">
+                    <Avatar
+                      sx={{
+                        bgcolor: alpha(theme.palette.primary.main, 0.1),
+                        color: "primary.main",
+                        width: 40,
+                        height: 40,
+                      }}>
+                      {stat.icon}
+                    </Avatar>
+                    <Box>
+                      <Typography variant="h6" fontWeight={900}>
+                        {stat.value}
+                      </Typography>
+                      <Typography
+                        variant="caption"
+                        color="text.secondary"
+                        fontWeight={700}
+                        sx={{ textTransform: "uppercase", fontSize: "0.6rem" }}>
+                        {stat.label}
+                      </Typography>
+                    </Box>
+                  </Stack>
+                </Card>
               </Grid>
             ))}
           </Grid>
         </Container>
       </Box>
 
-      {/* 5. CONTACT SECTION */}
-      <Container maxWidth="lg" sx={{ py: 15 }}>
-        <Grid container spacing={8} alignItems="center">
-          <Grid size={{ xs: 12, md: 6 }}>
-            <Typography variant="h3" fontWeight={900} gutterBottom>
-              Have questions?
-            </Typography>
-            <Typography variant="body1" color="text.secondary" sx={{ mb: 4 }}>
-              Our team is here to help you set up your first invoice and get
-              your business moving.
-            </Typography>
-            <Stack spacing={3}>
-              <Stack direction="row" spacing={2} alignItems="center">
-                <Avatar
-                  sx={{
-                    bgcolor: alpha(theme.palette.primary.main, 0.1),
-                    color: "primary.main",
-                  }}>
-                  <MailOutline />
-                </Avatar>
-                <Box>
-                  <Typography variant="subtitle2" fontWeight={700}>
-                    Email us
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    support@ginivo.com
-                  </Typography>
-                </Box>
-              </Stack>
-              <Stack direction="row" spacing={2} alignItems="center">
-                <Avatar
-                  sx={{
-                    bgcolor: alpha(theme.palette.primary.main, 0.1),
-                    color: "primary.main",
-                  }}>
-                  <LocationOnOutlined />
-                </Avatar>
-                <Box>
-                  <Typography variant="subtitle2" fontWeight={700}>
-                    Headquarters
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    123 Billing Ave, San Francisco, CA
-                  </Typography>
-                </Box>
-              </Stack>
-            </Stack>
-          </Grid>
-          <Grid size={{ xs: 12, md: 6 }}>
-            <Card
-              sx={{
-                p: 4,
-                borderRadius: 4,
-                border: "1px solid",
-                borderColor: "divider",
-                boxShadow: "none",
-              }}>
-              <Typography variant="h5" fontWeight={800} sx={{ mb: 3 }}>
-                Get in touch
-              </Typography>
-              <Stack spacing={2}>
-                <Box
-                  component="input"
-                  placeholder="Your Name"
-                  sx={{
-                    p: 2,
-                    borderRadius: 2,
-                    border: "1px solid",
-                    borderColor: "divider",
-                    outline: "none",
-                  }}
-                />
-                <Box
-                  component="input"
-                  placeholder="Work Email"
-                  sx={{
-                    p: 2,
-                    borderRadius: 2,
-                    border: "1px solid",
-                    borderColor: "divider",
-                    outline: "none",
-                  }}
-                />
-                <Box
-                  component="textarea"
-                  placeholder="How can we help?"
-                  rows={4}
-                  sx={{
-                    p: 2,
-                    borderRadius: 2,
-                    border: "1px solid",
-                    borderColor: "divider",
-                    outline: "none",
-                    fontFamily: "inherit",
-                  }}
-                />
-                <Button
-                  variant="contained"
-                  fullWidth
-                  size="large"
-                  sx={{ py: 1.5, fontWeight: 800 }}>
-                  Send Message
-                </Button>
-              </Stack>
-            </Card>
-          </Grid>
-        </Grid>
-      </Container>
-
-      {/* 6. FOOTER */}
-      <Box
-        sx={{
-          bgcolor: "background.paper",
-          pt: 10,
-          pb: 4,
-          borderTop: "1px solid",
-          borderColor: "divider",
-        }}>
-        <Container maxWidth="lg">
-          <Grid container spacing={4} sx={{ mb: 8 }}>
-            <Grid size={{ xs: 12, md: 4 }}>
-              <Stack spacing={2}>
-                <Stack direction="row" spacing={1} alignItems="center">
+      {/* 4. OPERATIONAL MODULES */}
+      <Container maxWidth="lg" sx={{ py: { xs: 4, md: 8 } }}>
+        <Typography
+          variant="h5"
+          fontWeight={800}
+          sx={{ mb: 4, textAlign: { xs: "center", md: "left" } }}>
+          Operational Modules
+        </Typography>
+        <Grid container spacing={3}>
+          {DEV_TOOLS.map((tool, index) => (
+            <Grid key={index} size={{xs:12, sm:6, md:4}}>
+              <Card
+                variant="outlined"
+                sx={{
+                  p: { xs: 3, md: 4 },
+                  height: "100%",
+                  borderRadius: 4,
+                  cursor: "pointer",
+                  transition: "0.3s",
+                  "&:hover": {
+                    borderColor: "primary.main",
+                    boxShadow: `0 12px 40px ${alpha(theme.palette.primary.main, 0.12)}`,
+                    transform: "translateY(-5px)",
+                  },
+                }}
+                onClick={() => navigate(tool.path)}>
+                <Stack spacing={2}>
                   <Box
                     sx={{
-                      width: 28,
-                      height: 28,
-                      bgcolor: "primary.main",
-                      borderRadius: 0.5,
+                      width: 48,
+                      height: 48,
+                      borderRadius: 1.5,
+                      bgcolor: alpha(theme.palette.primary.main, 0.1),
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
                     }}>
-                    <DescriptionOutlined
-                      sx={{ color: "white", fontSize: 18 }}
-                    />
+                    {tool.icon}
                   </Box>
-                  <Typography variant="h6" fontWeight={900}>
-                    Ginivo
+                  <Typography variant="h6" fontWeight={800}>
+                    {tool.title}
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    sx={{ lineHeight: 1.6 }}>
+                    {tool.desc}
                   </Typography>
                 </Stack>
-                <Typography
-                  variant="body2"
-                  color="text.secondary"
-                  sx={{ maxWidth: 280 }}>
-                  Making billing simple for freelancers and small businesses
-                  worldwide.
-                </Typography>
-                <Stack direction="row" spacing={1}>
-                  <IconButton size="small">
-                    <Twitter fontSize="small" />
-                  </IconButton>
-                  <IconButton size="small">
-                    <LinkedIn fontSize="small" />
-                  </IconButton>
-                  <IconButton size="small">
-                    <GitHub fontSize="small" />
-                  </IconButton>
-                </Stack>
-              </Stack>
+              </Card>
             </Grid>
-            <Grid size={{ xs: 6, md: 2 }}>
-              <Typography variant="subtitle2" fontWeight={700} sx={{ mb: 2 }}>
-                Product
+          ))}
+        </Grid>
+      </Container>
+
+      {/* 5. FOOTER */}
+      <Box
+        sx={{ py: 4, borderTop: "1px solid", borderColor: "divider", mt: 4 }}>
+        <Container maxWidth="lg">
+          <Stack
+            direction={{ xs: "column", sm: "row" }}
+            justifyContent="space-between"
+            alignItems="center"
+            spacing={2}>
+            <Typography
+              variant="caption"
+              color="text.disabled"
+              textAlign="center">
+              © 2026 Ginimeg Technology • Build 882.AF
+            </Typography>
+            <Stack direction="row" spacing={3}>
+              <Typography
+                variant="caption"
+                sx={{
+                  cursor: "pointer",
+                  "&:hover": { color: "primary.main" },
+                }}>
+                System Status
               </Typography>
-              <Stack spacing={1}>
-                {["Features", "Integrations", "Pricing"].map((item) => (
-                  <Link
-                    key={item}
-                    href="#"
-                    underline="none"
-                    color="text.secondary"
-                    variant="body2">
-                    {item}
-                  </Link>
-                ))}
-              </Stack>
-            </Grid>
-            <Grid size={{ xs: 6, md: 2 }}>
-              <Typography variant="subtitle2" fontWeight={700} sx={{ mb: 2 }}>
-                Company
+              <Typography
+                variant="caption"
+                sx={{
+                  cursor: "pointer",
+                  "&:hover": { color: "primary.main" },
+                }}>
+                Security Policy
               </Typography>
-              <Stack spacing={1}>
-                {["About Us", "Careers", "Contact"].map((item) => (
-                  <Link
-                    key={item}
-                    href="#"
-                    underline="none"
-                    color="text.secondary"
-                    variant="body2">
-                    {item}
-                  </Link>
-                ))}
-              </Stack>
-            </Grid>
-            <Grid size={{ xs: 12, md: 4 }}>
-              <Typography variant="subtitle2" fontWeight={700} sx={{ mb: 2 }}>
-                Stay Updated
-              </Typography>
-              <Stack direction="row" spacing={1}>
-                <Box
-                  component="input"
-                  placeholder="Email address"
-                  sx={{
-                    flexGrow: 1,
-                    p: 1,
-                    px: 2,
-                    borderRadius: 1.5,
-                    border: "1px solid",
-                    borderColor: "divider",
-                  }}
-                />
-                <Button variant="contained">Join</Button>
-              </Stack>
-            </Grid>
-          </Grid>
-          <Divider sx={{ mb: 4 }} />
-          <Typography variant="body2" color="text.disabled" textAlign="center">
-            © 2026 Ginivo Invoicing Inc. All rights reserved.
-          </Typography>
+            </Stack>
+          </Stack>
         </Container>
       </Box>
     </Box>
