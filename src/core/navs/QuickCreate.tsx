@@ -10,12 +10,7 @@ import {
   ListItemIcon,
   ListItemText,
 } from "@mui/material";
-import {
-  Add as AddIcon,
-  DescriptionOutlined,
-  ReceiptOutlined,
-  PersonAddOutlined,
-} from "@mui/icons-material";
+import { Add as AddIcon, AppsOutlined } from "@mui/icons-material";
 
 type TProps = {
   smallScreen: boolean;
@@ -82,14 +77,14 @@ export default function QuickCreate({ smallScreen }: TProps) {
         }}>
         <MenuItem onClick={handleCloseCreate} sx={{ py: 1.2 }}>
           <ListItemIcon>
-            <DescriptionOutlined fontSize="small" />
+            <AppsOutlined fontSize="small" />
           </ListItemIcon>
           <ListItemText
-            primary="Invoice"
+            primary="App"
             primaryTypographyProps={{ variant: "body2", fontWeight: 500 }}
           />
         </MenuItem>
-        <MenuItem onClick={handleCloseCreate} sx={{ py: 1.2 }}>
+        {/* <MenuItem onClick={handleCloseCreate} sx={{ py: 1.2 }}>
           <ListItemIcon>
             <ReceiptOutlined fontSize="small" />
           </ListItemIcon>
@@ -106,7 +101,7 @@ export default function QuickCreate({ smallScreen }: TProps) {
             primary="Client"
             primaryTypographyProps={{ variant: "body2", fontWeight: 500 }}
           />
-        </MenuItem>
+        </MenuItem> */}
       </Menu>
     </Box>
   );

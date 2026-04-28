@@ -61,7 +61,7 @@ export default function AuthNavbar({
               color: "text.primary",
               fontSize: "1.25rem",
             }}>
-            Gini Apps
+            Ginimeg Apps
           </Typography>
         </Box>
 

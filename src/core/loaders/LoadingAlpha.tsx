@@ -64,7 +64,7 @@ export default function LoadingAlpha({ message }: TProps) {
               //color: "",
               fontSize: "1.3rem",
             }}>
-            Ginivo
+            Ginimeg Apps
           </Typography>
         </Stack>
       </Box>

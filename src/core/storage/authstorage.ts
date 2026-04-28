@@ -23,14 +23,6 @@ export const SET_AUTH_ACCOUNT_ID = (value: string) => {
   setAuthStorage("AUTH_ACCOUNT_ID", value);
 };
 
-export const SET_AUTH_COMPANY_ID = (value: string) => {
-  setAuthStorage("AUTH_COMPANY_ID", value);
-};
-
-export const SET_AUTH_COMPANY_NAME = (value: string) => {
-  setAuthStorage("AUTH_COMPANY_NAME", value);
-};
-
 export const SET_AUTH_FIRSTNAME = (value: string) => {
   setAuthStorage("AUTH_FIRSTNAME", value);
 };
@@ -63,7 +55,6 @@ export const AUTH_COMPANY_ID = () => {
 export const AUTH_COMPANY_NAME = () => {
   return getAuthStorage("AUTH_COMPANY_NAME"); // Added return!
 };
-
 
 export const AUTH_FIRSTNAME = () => {
   return getAuthStorage("AUTH_FIRSTNAME"); // Added for completeness

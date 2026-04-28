@@ -1,3 +1,4 @@
+import { AUTH_TOKEN } from "@core/storage/authstorage";
 import { api } from "./api";
 
 export const apiGetApps = async () => {
@@ -8,7 +9,7 @@ export const apiGetApps = async () => {
       //   body: JSON.stringify(param),
       headers: {
         "Content-Type": "application/json",
-        //Authorization: `Bearer ${AUTH_TOKEN()}`,
+        Authorization: `Bearer ${AUTH_TOKEN()}`,
       },
     });
     return response.json();
@@ -25,7 +26,7 @@ export const apiGetAppById = async (app_id: string) => {
       //   body: JSON.stringify(param),
       headers: {
         "Content-Type": "application/json",
-        //Authorization: `Bearer ${AUTH_TOKEN()}`,
+        Authorization: `Bearer ${AUTH_TOKEN()}`,
       },
     });
     return response.json();
@@ -42,7 +43,7 @@ export const apiGenerateAppApiKey = async (app_id: string) => {
       //   body: JSON.stringify(param),
       headers: {
         "Content-Type": "application/json",
-        //Authorization: `Bearer ${AUTH_TOKEN()}`,
+        Authorization: `Bearer ${AUTH_TOKEN()}`,
       },
     });
     return response.json();

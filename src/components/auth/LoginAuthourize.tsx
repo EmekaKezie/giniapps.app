@@ -8,8 +8,6 @@ import type { ILoginRes } from "@appTypes/IAuth";
 import { loginApi } from "@api/authApi";
 import {
   SET_AUTH_ACCOUNT_ID,
-  SET_AUTH_COMPANY_ID,
-  SET_AUTH_COMPANY_NAME,
   SET_AUTH_EMAIL,
   SET_AUTH_FIRSTNAME,
   SET_AUTH_LASTNAME,
@@ -65,8 +63,8 @@ export default function LoginAuthourize() {
         SET_AUTH_TOKEN(res.data?.token!);
         SET_AUTH_USER_ID(res.data?.user_id!);
         SET_AUTH_ACCOUNT_ID(res.data?.account_id!);
-        SET_AUTH_COMPANY_ID(res.data?.company_id!);
-        SET_AUTH_COMPANY_NAME(res?.data?.company?.name!);
+        // SET_AUTH_COMPANY_ID(res.data?.company_id!);
+        // SET_AUTH_COMPANY_NAME(res?.data?.company?.name!);
         SET_AUTH_FIRSTNAME(res.data?.firstname!);
         SET_AUTH_LASTNAME(res.data?.lastname!);
         SET_AUTH_EMAIL(res.data?.email!);
@@ -74,7 +72,7 @@ export default function LoginAuthourize() {
         const accounts = await fetchAccountList(res?.data?.user_id!);
         console.log(accounts);
 
-        navigate("../invoice");
+        navigate("../apps");
       }
     } catch (error) {
       console.log(error);

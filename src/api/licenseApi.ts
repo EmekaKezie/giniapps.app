@@ -4,6 +4,7 @@ import type {
   IInspectLicenseRequest,
 } from "@appTypes/ILicense";
 import { api } from "./api";
+import { AUTH_TOKEN } from "@core/storage/authstorage";
 
 export const apiGenerateLicense = async (param: IGenerateLicenseRequest) => {
   try {
@@ -13,7 +14,7 @@ export const apiGenerateLicense = async (param: IGenerateLicenseRequest) => {
       body: JSON.stringify(param),
       headers: {
         "Content-Type": "application/json",
-        //Authorization: `Bearer ${AUTH_TOKEN()}`,
+        Authorization: `Bearer ${AUTH_TOKEN()}`,
       },
     });
     return response.json();
@@ -30,7 +31,7 @@ export const apiInspectLicense = async (param: IInspectLicenseRequest) => {
       body: JSON.stringify(param),
       headers: {
         "Content-Type": "application/json",
-        //Authorization: `Bearer ${AUTH_TOKEN()}`,
+        Authorization: `Bearer ${AUTH_TOKEN()}`,
       },
     });
     return response.json();
@@ -49,7 +50,7 @@ export const apiApplyLicense = async (
       body: JSON.stringify(param),
       headers: {
         "Content-Type": "application/json",
-        //Authorization: `Bearer ${AUTH_TOKEN()}`,
+        Authorization: `Bearer ${AUTH_TOKEN()}`,
       },
     });
     return response.json();
