@@ -25,8 +25,13 @@ import {
 import { enqueueSnackbar } from "notistack";
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { apiGenerateLicense } from "@api/licenseApi";
-import type { IGenerateLicenseRequest } from "@appTypes/ILicense";
+import { apiGenerateLicense, apiInspectLicense } from "@api/licenseApi";
+import type {
+  IGenerateLicenseRequest,
+  IInspectLicenseRequest,
+  IInspectLicenseResponse,
+} from "@appTypes/ILicense";
+import VerifyLicenseDialog from "./VerifyLicenseDialog";
 
 export default function AppView() {
   const { app_id } = useParams();
@@ -34,14 +39,23 @@ export default function AppView() {
 
   const [app, setApp] = useState<IAppView>();
   const [appLoading, setAppLoading] = useState(false);
+  const [days, setDays] = useState(30);
+  const [genLicense, setGenLicense] = useState("");
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [expiry, setExpiry] = useState("");
+  const [isExpired, setIsExpired] = useState(false);
+
+  const [openVerify, setOpenVerify] = useState(false);
 
   useEffect(() => {
     fetchApp();
   }, [app_id]);
 
-  const [days, setDays] = useState(30);
-  const [genLicense, setGenLicense] = useState("");
-  const [isGenerating, setIsGenerating] = useState(false);
+  useEffect(() => {
+    if (genLicense) {
+      InspectApp();
+    }
+  }, [genLicense]);
 
   const fetchApp = async () => {
     setAppLoading(true);
@@ -61,6 +75,29 @@ export default function AppView() {
       enqueueSnackbar("Error fetching app detail", { variant: "error" });
     } finally {
       setAppLoading(false);
+    }
+  };
+
+  const InspectApp = async () => {
+    // setAppLoading(true);
+    try {
+      const payload: IInspectLicenseRequest = {
+        license: genLicense,
+      };
+      const res: IApiRes<IInspectLicenseResponse> =
+        await apiInspectLicense(payload);
+      if (res?.status === "success") {
+        setExpiry(res?.data?.expiry!);
+        if (new Date().getTime() > new Date(res?.data?.expiry!).getTime()) {
+          setIsExpired(true);
+        }
+      } else {
+        handleApiError(res, enqueueSnackbar);
+      }
+    } catch (error) {
+      // enqueueSnackbar("Error fetching app detail", { variant: "error" });
+    } finally {
+      // setAppLoading(false);
     }
   };
 
@@ -260,8 +297,50 @@ export default function AppView() {
               </IconButton>
             </Paper>
           )}
+
+          <br />
+
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}>
+            <Button
+              variant="contained"
+              color="info"
+              size="small"
+              disableElevation
+              sx={{ textTransform: "none", borderRadius: 5 }}
+              onClick={() => setOpenVerify(true)}>
+              Apply License
+            </Button>
+
+            <Typography
+              variant="body2"
+              color={isExpired ? "error" : "primary"}
+              fontWeight={600}>
+              Expiry:{" "}
+              {new Date(expiry).toLocaleDateString("en-NG", {
+                dateStyle: "medium",
+                timeZone: "utc",
+              })}
+            </Typography>
+          </Box>
         </Card>
       </Stack>
+
+      {openVerify && (
+        <VerifyLicenseDialog
+          open={openVerify}
+          app={app!}
+          onClose={() => setOpenVerify(false)}
+          onSuccess={() => {
+            fetchApp();
+            setOpenVerify(false);
+          }}
+        />
+      )}
     </Box>
   );
 }
