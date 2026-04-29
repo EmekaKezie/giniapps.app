@@ -43,6 +43,7 @@ export const apiInspectLicense = async (param: IInspectLicenseRequest) => {
 export const apiApplyLicense = async (
   url: string,
   param: IApplyLicenseRequest,
+  apikey: string,
 ) => {
   try {
     const response = await fetch(url, {
@@ -50,7 +51,7 @@ export const apiApplyLicense = async (
       body: JSON.stringify(param),
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${AUTH_TOKEN()}`,
+        Authorization: `Bearer ${apikey}`,
       },
     });
     return response.json();

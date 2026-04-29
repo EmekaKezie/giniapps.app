@@ -68,6 +68,7 @@ export default function VerifyLicenseDialog({
         const res: IApiRes<IApplyLicenseResponse> = await apiApplyLicense(
           values.url,
           payload,
+          app.api_key!,
         );
         if (res.status === "success") {
           enqueueSnackbar(res?.message!, {
