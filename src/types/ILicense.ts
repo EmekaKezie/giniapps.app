@@ -1,6 +1,7 @@
 export interface IGenerateLicenseRequest {
   app_code: string;
   valid_days: number;
+  is_permanent: boolean;
 }
 
 export interface IGenerateLicenseResponse {

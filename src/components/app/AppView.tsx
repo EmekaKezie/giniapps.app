@@ -14,6 +14,10 @@ import {
   InputAdornment,
   Chip,
   Paper,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
 } from "@mui/material";
 import {
   ContentCopy,
@@ -37,9 +41,12 @@ export default function AppView() {
   const { app_id } = useParams();
   const navigate = useNavigate();
 
+  const licenseTypes = ["temporal", "permanent"];
+
   const [app, setApp] = useState<IAppView>();
   const [appLoading, setAppLoading] = useState(false);
   const [days, setDays] = useState(30);
+  const [selectedType, setSelectedType] = useState(licenseTypes[0]);
   const [genLicense, setGenLicense] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
   const [expiry, setExpiry] = useState("");
@@ -79,25 +86,21 @@ export default function AppView() {
   };
 
   const InspectApp = async () => {
-    // setAppLoading(true);
     try {
       const payload: IInspectLicenseRequest = {
         license: genLicense,
       };
       const res: IApiRes<IInspectLicenseResponse> =
         await apiInspectLicense(payload);
-      if (res?.status === "success") {
-        setExpiry(res?.data?.expiry!);
-        if (new Date().getTime() > new Date(res?.data?.expiry!).getTime()) {
-          setIsExpired(true);
-        }
+
+      setExpiry(res?.data?.expiry!);
+
+      if (new Date().getTime() > new Date(res?.data?.expiry!).getTime()) {
+        setIsExpired(true);
       } else {
-        handleApiError(res, enqueueSnackbar);
       }
     } catch (error) {
-      // enqueueSnackbar("Error fetching app detail", { variant: "error" });
     } finally {
-      // setAppLoading(false);
     }
   };
 
@@ -120,6 +123,7 @@ export default function AppView() {
       const payload: IGenerateLicenseRequest = {
         app_code: app.app_code!,
         valid_days: days,
+        is_permanent: selectedType === licenseTypes[1] ? true : false,
       };
       const res = await apiGenerateLicense(payload);
       if (res.status === "success") {
@@ -245,26 +249,58 @@ export default function AppView() {
             direction={{ xs: "column", md: "row" }}
             spacing={2}
             sx={{ mb: 3 }}>
+            {/* App Code - 30% on large, Full on small */}
             <TextField
               label="App Code"
               placeholder="Enter App Code"
               value={app?.app_code}
-              //onChange={(e) => setAppCode(e.target.value)}
-              fullWidth
+              sx={{ width: { xs: "100%", md: "30%" } }}
             />
+
+            {/* License Type - 25% on large, Full on small */}
+            <FormControl
+              variant="outlined"
+              sx={{ width: { xs: "100%", md: "25%" } }}>
+              <InputLabel id="license-type-label">License Type</InputLabel>
+              <Select
+                labelId="license-type-label"
+                value={selectedType}
+                label="License Type"
+                onChange={(e) => setSelectedType(e.target.value)}
+                sx={{ borderRadius: 2, textTransform: "capitalize" }}>
+                {licenseTypes.map((type) => (
+                  <MenuItem
+                    key={type}
+                    value={type}
+                    sx={{ textTransform: "capitalize" }}>
+                    {type}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+
+            {/* Validity - 20% on large, Full on small */}
             <TextField
               label="Validity (Days)"
               type="number"
-              value={days}
+              disabled={selectedType === "permanent"}
+              value={selectedType === "permanent" ? "" : days}
               onChange={(e) => setDays(Number(e.target.value))}
-              sx={{ width: { md: "200px" } }}
+              sx={{ width: { xs: "100%", md: "20%" } }}
             />
+
+            {/* Button - Remaining width on large, Full on small */}
             <Button
               variant="contained"
               disableElevation
               onClick={handleGenerateLicense}
               loading={isGenerating}
-              sx={{ px: 4 }}>
+              sx={{
+                px: 4,
+                height: { md: "56px" }, // Matches TextField height on large screens
+                width: { xs: "100%", md: "auto" },
+                flexGrow: { md: 1 }, // Allows button to fill remaining space on row
+              }}>
               {app?.generated_license ? "Regenerate" : "Generate"}
             </Button>
           </Stack>
@@ -317,10 +353,10 @@ export default function AppView() {
             </Button>
 
             <Stack direction="row" alignItems="center" spacing={0.5}>
-              <Typography>Expiry:</Typography>{" "}
+              <Typography variant="body2">Expiry:</Typography>{" "}
               <Typography
                 variant="body2"
-                color={isExpired ? "error" : "primary"}>
+                color={isExpired ? "error" : "success"} fontWeight={600}>
                 {new Date(expiry).toLocaleDateString("en-NG", {
                   dateStyle: "medium",
                   timeZone: "utc",
