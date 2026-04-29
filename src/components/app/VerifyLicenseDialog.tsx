@@ -10,6 +10,7 @@ import {
   Typography,
   Box,
   IconButton,
+  Chip,
 } from "@mui/material";
 import { Close, Security, Link } from "@mui/icons-material";
 import { useFormik } from "formik";
@@ -38,6 +39,11 @@ export default function VerifyLicenseDialog({
   onSuccess,
 }: TProps) {
   const [isValidating, setIsValidating] = useState(false);
+
+  const urls: string[] = app?.authorized_urls?.split(",") || [];
+  const license_validation_urls = urls?.map((i) => {
+    return `${i}/license/validate`;
+  });
 
   const formik = useFormik({
     initialValues: {
@@ -120,6 +126,24 @@ export default function VerifyLicenseDialog({
               <Typography variant="body2">
                 {app.app_name} ({app.app_code})
               </Typography>
+            </Box>
+
+            <Box>
+              {license_validation_urls?.map((i) => {
+                return (
+                  <Chip
+                    label={i}
+                    onClick={() => {
+                      formik.setFieldValue("url", i);
+                    }}
+                    size="small"
+                    onDelete={() => {
+                      formik.setFieldValue("url", "");
+                    }}
+                    color={formik.values.url === i ? "info" : "default"}
+                  />
+                );
+              })}
             </Box>
 
             <TextField

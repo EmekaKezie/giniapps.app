@@ -13,4 +13,6 @@ export interface IAppView {
   license_private_key?: string;
   license_public_key?: string;
   generated_license?: string;
+
+  authorized_urls?: string;
 }
