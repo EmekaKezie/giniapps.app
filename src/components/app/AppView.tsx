@@ -316,16 +316,23 @@ export default function AppView() {
               Apply License
             </Button>
 
-            <Typography
-              variant="body2"
-              color={isExpired ? "error" : "primary"}
-              fontWeight={600}>
-              Expiry:{" "}
-              {new Date(expiry).toLocaleDateString("en-NG", {
-                dateStyle: "medium",
-                timeZone: "utc",
-              })}
-            </Typography>
+            <Stack direction="row" alignItems="center" spacing={0.5}>
+              <Typography>Expiry:</Typography>{" "}
+              <Typography
+                variant="body2"
+                color={isExpired ? "error" : "primary"}>
+                {new Date(expiry).toLocaleDateString("en-NG", {
+                  dateStyle: "medium",
+                  timeZone: "utc",
+                })}
+                {" @ "}
+                {new Date(expiry).toLocaleTimeString("en-NG", {
+                  hour12: true,
+                  timeStyle: "short",
+                  timeZone: "utc",
+                })}
+              </Typography>
+            </Stack>
           </Box>
         </Card>
       </Stack>
