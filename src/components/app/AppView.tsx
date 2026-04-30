@@ -154,7 +154,7 @@ export default function AppView() {
   }
 
   return (
-    <Box sx={{ p: { xs: 2, md: 4 } }}>
+    <Box sx={{ p: { xs: 2, md: 3 } }}>
       {/* Navigation & Header */}
       <Button
         startIcon={<ArrowBack />}
@@ -245,11 +245,7 @@ export default function AppView() {
             </Typography>
           </Box>
 
-          <Stack
-            direction={{ xs: "column", md: "row" }}
-            spacing={2}
-            sx={{ mb: 3 }}>
-            {/* App Code - 30% on large, Full on small */}
+          <Stack direction={{ xs: "column", md: "row" }} spacing={2}>
             <TextField
               label="App Code"
               placeholder="Enter App Code"
@@ -257,7 +253,6 @@ export default function AppView() {
               sx={{ width: { xs: "100%", md: "30%" } }}
             />
 
-            {/* License Type - 25% on large, Full on small */}
             <FormControl
               variant="outlined"
               sx={{ width: { xs: "100%", md: "25%" } }}>
@@ -334,42 +329,44 @@ export default function AppView() {
             </Paper>
           )}
 
-          <br />
+          {genLicense && (
+            <Box
+              sx={{
+                mt: 4,
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}>
+              <Button
+                variant="contained"
+                color="info"
+                size="small"
+                disableElevation
+                sx={{ textTransform: "none", borderRadius: 5 }}
+                onClick={() => setOpenVerify(true)}>
+                Apply License
+              </Button>
 
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}>
-            <Button
-              variant="contained"
-              color="info"
-              size="small"
-              disableElevation
-              sx={{ textTransform: "none", borderRadius: 5 }}
-              onClick={() => setOpenVerify(true)}>
-              Apply License
-            </Button>
-
-            <Stack direction="row" alignItems="center" spacing={0.5}>
-              <Typography variant="body2">Expiry:</Typography>{" "}
-              <Typography
-                variant="body2"
-                color={isExpired ? "error" : "success"} fontWeight={600}>
-                {new Date(expiry).toLocaleDateString("en-NG", {
-                  dateStyle: "medium",
-                  timeZone: "utc",
-                })}
-                {" @ "}
-                {new Date(expiry).toLocaleTimeString("en-NG", {
-                  hour12: true,
-                  timeStyle: "short",
-                  timeZone: "utc",
-                })}
-              </Typography>
-            </Stack>
-          </Box>
+              <Stack direction="row" alignItems="center" spacing={0.5}>
+                <Typography variant="body2">Expiry:</Typography>{" "}
+                <Typography
+                  variant="body2"
+                  color={isExpired ? "error" : "success"}
+                  fontWeight={600}>
+                  {new Date(expiry).toLocaleDateString("en-NG", {
+                    dateStyle: "medium",
+                    timeZone: "utc",
+                  })}
+                  {" @ "}
+                  {new Date(expiry).toLocaleTimeString("en-NG", {
+                    hour12: true,
+                    timeStyle: "short",
+                    timeZone: "utc",
+                  })}
+                </Typography>
+              </Stack>
+            </Box>
+          )}
         </Card>
       </Stack>
 

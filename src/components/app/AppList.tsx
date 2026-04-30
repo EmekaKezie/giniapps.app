@@ -24,6 +24,7 @@ import {
 import { enqueueSnackbar } from "notistack";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import CreateAppDialog from "./CreateAppDialog";
 
 const getTypeIcon = (type: string) => {
   switch (type) {
@@ -38,8 +39,10 @@ const getTypeIcon = (type: string) => {
 
 export default function AppList() {
   const navigate = useNavigate();
+
   const [appList, setAppList] = useState<IAppView[]>([]);
   const [appLoading, setAppLoading] = useState(false);
+  const [openCreateApp, setOpenCreateApp] = useState(false);
 
   useEffect(() => {
     fetchApps();
@@ -84,7 +87,7 @@ export default function AppList() {
   }
 
   return (
-    <Box sx={{ p: 3 }}>
+    <Box sx={{ p: { xs: 2, md: 3 } }}>
       {/* Header Section */}
       <Stack
         direction="row"
@@ -191,7 +194,7 @@ export default function AppList() {
         <Fab
           color="primary"
           variant="extended"
-          onClick={() => alert("Open Create App Modal")}
+          onClick={() => setOpenCreateApp(true)}
           sx={{
             textTransform: "none",
             fontWeight: "bold",
@@ -201,6 +204,17 @@ export default function AppList() {
           <Add sx={{ mr: 1 }} /> New App
         </Fab>
       </Stack>
+
+      {openCreateApp && (
+        <CreateAppDialog
+          open={openCreateApp}
+          onClose={() => setOpenCreateApp(false)}
+          onSuccess={() => {
+            setOpenCreateApp(false);
+            fetchApps();
+          }}
+        />
+      )}
     </Box>
   );
 }
