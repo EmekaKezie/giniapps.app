@@ -303,7 +303,7 @@ export default function AppView() {
           {genLicense && (
             <Paper
               variant="outlined"
-              sx={{ p: 2, bgcolor: "grey.50", position: "relative" }}>
+              sx={{ p: 2, mt:2, bgcolor: "grey.50", position: "relative" }}>
               <Typography
                 variant="caption"
                 display="block"
@@ -332,7 +332,7 @@ export default function AppView() {
           {genLicense && (
             <Box
               sx={{
-                mt: 4,
+                mt: 2,
                 display: "flex",
                 justifyContent: "space-between",
                 alignItems: "center",
