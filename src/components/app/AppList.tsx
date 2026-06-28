@@ -20,6 +20,7 @@ import {
   Chip,
   Divider,
   Avatar,
+  Grid,
 } from "@mui/material";
 import { enqueueSnackbar } from "notistack";
 import { useEffect, useState } from "react";
@@ -29,11 +30,11 @@ import CreateAppDialog from "./CreateAppDialog";
 const getTypeIcon = (type: string) => {
   switch (type) {
     case "Desktop":
-      return <Laptop fontSize="small" />;
+      return <Laptop sx={{ fontSize: 13 }} />;
     case "Mobile":
-      return <PhoneIphone fontSize="small" />;
+      return <PhoneIphone sx={{ fontSize: 13 }} />;
     default:
-      return <Language fontSize="small" />;
+      return <Language sx={{ fontSize: 13 }} />;
   }
 };
 
@@ -105,86 +106,95 @@ export default function AppList() {
       </Stack>
 
       {/* App List */}
-      <Stack spacing={2}>
+      <Grid container spacing={2}>
         {appList.map((i) => (
-          <Card
-            key={i.app_id}
-            elevation={0}
-            sx={{
-              border: "1px solid",
-              borderColor: "divider",
-              borderRadius: 3,
-              transition: "0.2s",
-              "&:hover": {
-                boxShadow: "0 8px 24px rgba(0,0,0,0.08)",
-                borderColor: "primary.main",
-              },
-            }}>
-            <CardActionArea
-              onClick={() => handleAppClick(i.app_id)}
-              sx={{ p: 2 }}>
-              <Stack direction="row" alignItems="center" spacing={3}>
-                {/* App Icon */}
-                <Avatar
-                  sx={{
-                    bgcolor: "primary.light",
-                    color: "primary.main",
-                    width: 56,
-                    height: 56,
-                    borderRadius: 2,
-                  }}>
-                  {i?.app_name.charAt(0)}
-                </Avatar>
-
-                {/* App Details */}
-                <Box sx={{ flexGrow: 1 }}>
-                  <Typography variant="h6" fontWeight="600">
-                    {i?.app_name}
-                  </Typography>
-                  <Stack
-                    direction="row"
-                    spacing={1}
-                    alignItems="center"
-                    sx={{ mt: 0.5 }}>
-                    <Box
-                      sx={{
-                        display: "flex",
-                        alignItems: "center",
-                        color: "text.secondary",
-                        gap: 0.5,
-                      }}>
-                      {getTypeIcon("web")}
-                      <Typography variant="caption">{"web"}</Typography>
-                    </Box>
-                    <Divider
-                      orientation="vertical"
-                      flexItem
-                      sx={{ mx: 0.5, height: 12, alignSelf: "center" }}
-                    />
-                    <Typography variant="caption" color="text.secondary">
-                      {i.generated_license ? "License Available" : ""}
-                    </Typography>
-                  </Stack>
-                </Box>
-
-                {/* Status & Arrow */}
+          <Grid key={i.app_id} size={{ md: 6, sm: 12, xs: 12 }}>
+            <Card
+              elevation={0}
+              sx={{
+                border: "1px solid",
+                borderColor: "divider",
+                borderRadius: 3,
+                transition: "0.2s",
+                "&:hover": {
+                  boxShadow: "0 8px 24px rgba(0,0,0,0.08)",
+                  borderColor: "primary.main",
+                },
+              }}>
+              <CardActionArea
+                onClick={() => handleAppClick(i.app_id)}
+                sx={{ p: 2 }}>
                 <Stack direction="row" alignItems="center" spacing={2}>
-                  <Chip
-                    label={i.is_active === 1 ? "success" : "warning"}
-                    size="small"
-                    color={i.is_active === 1 ? "success" : "warning"}
-                    //variant="soft" // If using MUI Joy or custom theme, otherwise use "outlined"
-                    sx={{ fontWeight: "bold", fontSize: "0.7rem" }}
-                  />
-                  <ArrowForwardIos
-                    sx={{ fontSize: 16, color: "action.disabled" }}
-                  />
+                  {/* App Icon */}
+                  <Avatar
+                    sx={{
+                      bgcolor: "primary.light",
+                      color: "primary.main",
+                      width: 56,
+                      height: 56,
+                      borderRadius: 2,
+                    }}>
+                    {i?.app_name.charAt(0)}
+                  </Avatar>
+
+                  {/* App Details */}
+                  <Box sx={{ flexGrow: 1 }}>
+                    <Typography
+                      variant="body1"
+                      fontWeight="600"
+                      noWrap
+                      sx={{ width: { xs: 120, sm: 200, md: "100%" } }}>
+                      {i?.app_name}
+                    </Typography>
+                    <Stack
+                      direction="row"
+                      spacing={1}
+                      alignItems="center"
+                      sx={{ mt: 0 }}>
+                      <Box
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                          color: "text.secondary",
+                          gap: 0.2,
+                        }}>
+                        {getTypeIcon("web")}
+                        <Typography variant="caption">{"web"}</Typography>
+                      </Box>
+                      <Divider
+                        orientation="vertical"
+                        flexItem
+                        sx={{ mx: 0.2, height: 12, alignSelf: "center" }}
+                      />
+                      <Typography
+                        variant="caption"
+                        color="info"
+                        noWrap
+                        sx={{ width: { xs: 50, sm: 100, md: "100%" } }}>
+                        {i.generated_license ? "License Available" : ""}
+                      </Typography>
+                    </Stack>
+                  </Box>
+
+                  {/* Status & Arrow */}
+                  <Stack direction="row" alignItems="center" spacing={2}>
+                    <Chip
+                      label={i.is_active === 1 ? "success" : "warning"}
+                      size="small"
+                      color={i.is_active === 1 ? "success" : "warning"}
+                      //variant="soft" // If using MUI Joy or custom theme, otherwise use "outlined"
+                      sx={{ fontWeight: "bold", fontSize: "0.7rem" }}
+                    />
+                    <ArrowForwardIos
+                      sx={{ fontSize: 16, color: "action.disabled" }}
+                    />
+                  </Stack>
                 </Stack>
-              </Stack>
-            </CardActionArea>
-          </Card>
+              </CardActionArea>
+            </Card>
+          </Grid>
         ))}
-      </Stack>
+      </Grid>
 
       {/* Floating Action Button */}
       <Stack
