@@ -126,6 +126,7 @@ export default function AppList() {
                 sx={{ p: 2 }}>
                 <Stack direction="row" alignItems="center" spacing={2}>
                   {/* App Icon */}
+
                   <Avatar
                     sx={{
                       bgcolor: "primary.light",

@@ -12,12 +12,12 @@ import {
   TextField,
   IconButton,
   InputAdornment,
-  Chip,
   Paper,
   FormControl,
   InputLabel,
   Select,
   MenuItem,
+  Tooltip,
 } from "@mui/material";
 import {
   ContentCopy,
@@ -154,39 +154,48 @@ export default function AppView() {
   }
 
   return (
-    <Box sx={{ p: { xs: 2, md: 3 } }}>
-      {/* Navigation & Header */}
-      <Button
-        startIcon={<ArrowBack />}
-        onClick={() => navigate(-1)}
-        sx={{ mb: 2, textTransform: "none" }}>
-        Back to Apps
-      </Button>
-
-      <Stack
-        direction="row"
-        alignItems="center"
-        justifyContent="space-between"
-        sx={{ mb: 4 }}>
-        <Box>
-          <Typography variant="h4" fontWeight="800">
+    <Box sx={{ p: 2 }}>
+      <Box
+        sx={{
+          mb: 3,
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}>
+        <Stack direction="row" spacing={1} alignItems="center">
+          <Tooltip title="Back to Apps">
+            <IconButton
+              onClick={() => navigate(-1)}
+              sx={{ bgcolor: "background.default" }}>
+              <ArrowBack />
+            </IconButton>
+          </Tooltip>
+          <Typography variant="h5" fontWeight="800">
             {app?.app_name}
           </Typography>
-          <Stack direction="row" spacing={1} sx={{ mt: 1 }}>
-            <Chip
-              label={app?.app_code}
-              size="small"
-              sx={{ fontFamily: "monospace" }}
-            />
-            <Chip
-              label={app?.is_live ? "Live" : "Staging"}
-              color={app?.is_live ? "success" : "default"}
-              size="small"
-              variant="outlined"
-            />
-          </Stack>
-        </Box>
-      </Stack>
+        </Stack>
+
+        <Stack direction="row" spacing={1}>
+          <Button
+            variant="contained"
+            size="small"
+            color="error"
+            sx={{ textTransform: "none", borderRadius: 2 }}>
+            Delete App
+          </Button>
+          {/* <Chip
+            label={app?.app_code}
+            size="small"
+            sx={{ fontFamily: "monospace" }}
+          />
+          <Chip
+            label={app?.is_live ? "Live" : "Staging"}
+            color={app?.is_live ? "success" : "default"}
+            size="small"
+            variant="outlined"
+          /> */}
+        </Stack>
+      </Box>
 
       <Stack spacing={4}>
         {/* API KEY SECTION */}
@@ -303,7 +312,7 @@ export default function AppView() {
           {genLicense && (
             <Paper
               variant="outlined"
-              sx={{ p: 2, mt:2, bgcolor: "grey.50", position: "relative" }}>
+              sx={{ p: 2, mt: 2, bgcolor: "grey.50", position: "relative" }}>
               <Typography
                 variant="caption"
                 display="block"
@@ -352,7 +361,7 @@ export default function AppView() {
                 <Typography
                   variant="body2"
                   color={isExpired ? "error" : "success"}
-                  fontWeight={600}>
+                  fontWeight={400}>
                   {new Date(expiry).toLocaleDateString("en-NG", {
                     dateStyle: "medium",
                     timeZone: "utc",
