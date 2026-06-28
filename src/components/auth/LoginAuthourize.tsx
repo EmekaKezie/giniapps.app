@@ -93,9 +93,12 @@ export default function LoginAuthourize() {
       }}>
       <GinimegLogin
         clientId={clientId}
-        onSuccess={(res) => {
-          const jwtToken = res?.access_token;
+        onSuccess={(access_token) => {
+          console.log(access_token);
+          const jwtToken = access_token;
+
           const tokenValue: ITokenValue = jwtDecode(jwtToken);
+          console.log(tokenValue);
           handleLoginAsync(tokenValue);
         }}
         onError={(res) => {
