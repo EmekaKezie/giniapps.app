@@ -6,106 +6,152 @@ type TProps = {
   onError?: (message: string) => void;
 };
 
-//const ACCOUNTS_APP_FRONTEND = "http://localhost:4310/auth/login";
+//ACCOUNTS IDENTITY ENGINE ENDPOINTS
 const ACCOUNTS_APP_FRONTEND = "https://account.ginimeg.com/auth/login";
+const ACCOUNTS_API_TOKEN_ENDPOINT =
+  "https://account-api.ginimeg.com/api/oauth/authorize/token";
+
+// const ACCOUNTS_APP_FRONTEND = "http://localhost:4310/auth/login";
+// const ACCOUNTS_API_TOKEN_ENDPOINT =
+//   "http://localhost:4300/api/oauth/authorize/token";
+
+// Helper: Web Cryptography API SHA-256 PKCE Generator
+async function generatePKCE() {
+  const array = new Uint8Array(32);
+  window.crypto.getRandomValues(array);
+  const codeVerifier = btoa(String.fromCharCode(...array))
+    .replace(/\+/g, "-")
+    .replace(/\//g, "_")
+    .replace(/=+$/, "");
+
+  const encoder = new TextEncoder();
+  const data = encoder.encode(codeVerifier);
+  const digest = await window.crypto.subtle.digest("SHA-256", data);
+  const codeChallenge = btoa(String.fromCharCode(...new Uint8Array(digest)))
+    .replace(/\+/g, "-")
+    .replace(/\//g, "_")
+    .replace(/=+$/, "");
+
+  return { codeVerifier, codeChallenge };
+}
 
 export default function GinimegLogin({ clientId, onSuccess, onError }: TProps) {
-  // 👈 THE ABSOLUTE CIRCUIT BREAKER
-  // This persists across re-renders. If it becomes true, the redirect engine is completely dead.
   const isProcessingOrAuthenticating = useRef(false);
 
   useEffect(() => {
-    // If we already handled a success or are in the middle of routing, drop everything.
     if (isProcessingOrAuthenticating.current) return;
 
-    // 1. Strip the hash marker cleanly
-    const hashString = window.location.hash.startsWith("#")
-      ? window.location.hash.substring(1)
-      : window.location.hash;
-
-    const params = new URLSearchParams(hashString);
-    const accessToken = params.get("access_token");
-    const state = params.get("state");
-
     const searchParams = new URLSearchParams(window.location.search);
+    const authCode = searchParams.get("code");
+    const state = searchParams.get("state");
     const errorParam = searchParams.get("error");
 
     if (errorParam) {
+      isProcessingOrAuthenticating.current = true;
       onError?.(errorParam);
       return;
     }
 
     // =========================================================================
-    // CASE A: Token is in the URL. We are DONE. Stop the world.
+    // CASE A: Authorization Code Received in Query Parameters
     // =========================================================================
-    if (accessToken) {
-      // Throw the circuit breaker instantly before doing ANYTHING else
+    if (authCode) {
       isProcessingOrAuthenticating.current = true;
 
       const savedState = sessionStorage.getItem("oauth_state");
+      const codeVerifier = sessionStorage.getItem("oauth_code_verifier");
+
       if (!state || state !== savedState) {
-        onError?.("CSRF Warning: State mismatch!");
+        onError?.("CSRF Security Failure: State parameter mismatch.");
         return;
       }
+
+      if (!codeVerifier) {
+        onError?.(
+          "PKCE Validation Error: Code verifier missing from session storage.",
+        );
+        return;
+      }
+
+      // Clear OAuth session state variables immediately
       sessionStorage.removeItem("oauth_state");
+      sessionStorage.removeItem("oauth_code_verifier");
 
-      // // DECODE AND LOG YOUR USER PROFILE STRINGS
-      // try {
-      //   const base64Url = accessToken.split(".")[1];
-      //   const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
-      //   const jsonPayload = decodeURIComponent(
-      //     window
-      //       .atob(base64)
-      //       .split("")
-      //       .map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
-      //       .join(""),
-      //   );
-      //   const decodedProfile = JSON.parse(jsonPayload);
-
-      //   console.log("=========================================");
-      //   console.log("🎉 GINIMEG SIGN-ON SUCCESSFUL!");
-      //   console.log("Decoded Profile Object:", decodedProfile);
-      //   console.log("=========================================");
-      // } catch (decodeError) {
-      //   console.error("Failed to parse token:", decodeError);
-      // }
-
-      // Wipe the URL string cleanly so the token is hidden
-      window.history.replaceState(
-        {},
-        document.title,
-        window.location.pathname + window.location.search,
-      );
-
-      // Hand the token off to Ginivo's parent container layout
-      onSuccess(accessToken);
+      // Exchange short-lived Auth Code for Access Token
+      exchangeCodeForToken(authCode, codeVerifier);
       return;
     }
 
     // =========================================================================
-    // CASE B: First load, no token in the URL. Go to GiniAccount!
+    // CASE B: First Load -> Initiate Authorization Code + PKCE Flow
     // =========================================================================
-    // Only redirect if our circuit breaker is false (meaning this is a fresh entry)
     if (!isProcessingOrAuthenticating.current) {
-      isProcessingOrAuthenticating.current = true; // Lock it down so it can't execute twice
-      initiateLoginRedirect();
+      isProcessingOrAuthenticating.current = true;
+      initiatePKCELoginRedirect();
     }
-  }, [onSuccess, onError]); // Explicit stable hooks tracking variables array
+  }, [onSuccess, onError]);
 
-  const initiateLoginRedirect = () => {
-    const state = Math.random().toString(36).substring(2, 15);
-    sessionStorage.setItem("oauth_state", state);
+  const initiatePKCELoginRedirect = async () => {
+    try {
+      const state = Math.random().toString(36).substring(2, 15);
+      const { codeVerifier, codeChallenge } = await generatePKCE();
 
-    const redirectUri = window.location.origin + window.location.pathname;
+      sessionStorage.setItem("oauth_state", state);
+      sessionStorage.setItem("oauth_code_verifier", codeVerifier);
 
-    const authUrl =
-      `${ACCOUNTS_APP_FRONTEND}?` +
-      `client_id=${encodeURIComponent(clientId)}&` +
-      `redirect_uri=${encodeURIComponent(redirectUri)}&` +
-      `state=${encodeURIComponent(state)}&` +
-      `response_type=token`;
+      const redirectUri = window.location.origin + window.location.pathname;
 
-    window.location.href = authUrl;
+      const authUrl =
+        `${ACCOUNTS_APP_FRONTEND}?` +
+        `client_id=${encodeURIComponent(clientId)}&` +
+        `redirect_uri=${encodeURIComponent(redirectUri)}&` +
+        `state=${encodeURIComponent(state)}&` +
+        `response_type=code&` +
+        `code_challenge=${encodeURIComponent(codeChallenge)}&` +
+        `code_challenge_method=S256`;
+
+      window.location.href = authUrl;
+    } catch {
+      onError?.("Failed to compute PKCE security challenges.");
+    }
+  };
+
+  const exchangeCodeForToken = async (code: string, verifier: string) => {
+    try {
+      const redirectUri = window.location.origin + window.location.pathname;
+
+      const response = await fetch(ACCOUNTS_API_TOKEN_ENDPOINT, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          grant_type: "authorization_code",
+          client_id: clientId,
+          code: code,
+          redirect_uri: redirectUri,
+          code_verifier: verifier,
+        }),
+      });
+
+      const res = await response.json();
+
+      if (res?.status === "success" && res.data?.access_token) {
+        // Strip ?code=... and ?state=... cleanly from address bar
+        window.history.replaceState(
+          {},
+          document.title,
+          window.location.pathname,
+        );
+
+        // Deliver token to parent application layout
+        onSuccess(res.data.access_token);
+      } else {
+        onError?.(
+          res?.message || "Failed to exchange authorization code for token.",
+        );
+      }
+    } catch {
+      onError?.("Network error exchanging authorization code.");
+    }
   };
 
   return null;

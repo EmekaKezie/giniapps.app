@@ -51,6 +51,7 @@ export default function LoginAuthourize() {
   };
 
   const handleLoginAsync = async (token: ITokenValue) => {
+    console.log("Handling login for token:", token);
     setLoading(true);
     setLoadingMsg("Authorizing . . . Please wait");
 
@@ -59,6 +60,7 @@ export default function LoginAuthourize() {
         user_id: token.user_id,
       };
       const res: IApiRes<ILoginRes> = await loginApi(payload);
+      console.log(res)
       if (res?.status === "success") {
         SET_AUTH_TOKEN(res.data?.token!);
         SET_AUTH_USER_ID(res.data?.user_id!);
