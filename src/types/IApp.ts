@@ -15,6 +15,9 @@ export interface IAppView {
   generated_license?: string;
 
   authorized_urls?: string;
+
+  /** Logo URL, or a base64 / data-URI image. */
+  app_logo?: string | null;
 }
 
 

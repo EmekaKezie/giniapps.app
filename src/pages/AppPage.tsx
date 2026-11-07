@@ -1,10 +1,10 @@
 import AppList from "@components/app/AppList";
-import AuthLayout from "@core/layouts/AuthLayout";
+import ConsoleLayout from "@core/layouts/ConsoleLayout";
 
-export default function InvoicePage() {
+export default function AppPage() {
   return (
-    <AuthLayout>
+    <ConsoleLayout>
       <AppList />
-    </AuthLayout>
+    </ConsoleLayout>
   );
 }

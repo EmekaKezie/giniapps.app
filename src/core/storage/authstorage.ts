@@ -10,6 +10,21 @@ export const removeAuthStorage = (key: string) => {
   window.localStorage.removeItem(key);
 };
 
+const AUTH_KEYS = [
+  "AUTH_TOKEN",
+  "AUTH_USER_ID",
+  "AUTH_ACCOUNT_ID",
+  "AUTH_COMPANY_ID",
+  "AUTH_COMPANY_NAME",
+  "AUTH_FIRSTNAME",
+  "AUTH_LASTNAME",
+  "AUTH_EMAIL",
+];
+
+export const clearAuthStorage = () => {
+  AUTH_KEYS.forEach(removeAuthStorage);
+};
+
 // --- SETTERS ---
 export const SET_AUTH_TOKEN = (value: string) => {
   setAuthStorage("AUTH_TOKEN", value);

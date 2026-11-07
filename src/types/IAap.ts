@@ -1,25 +1,19 @@
 import type { ReactNode } from "react";
 
-type TMenuGroup = "explore" | "admin" | "ungrouped";
-
-export interface ISubMenu {
-  value: string;
-  name: string;
-  visible: boolean;
-  icon?: any;
-  component?: ReactNode;
-  url?: string;
+export interface IAppMenuItem {
+  id: string;
+  /** Relative to `/apps/:app_id`. Empty string = index page. */
+  path: string;
+  label: string;
+  icon: ReactNode;
+  component: ReactNode;
+  /** Page runs on mock data until its API is ready. */
+  preview?: boolean;
 }
 
-export interface IMenu {
-  id: string;
-  url: string;
-  displayName: string;
-  icon?: any;
-  component: ReactNode;
-  visible: boolean;
-  group: TMenuGroup;
-  subMenu: ISubMenu[];
+export interface IAppMenuGroup {
+  label?: string;
+  items: IAppMenuItem[];
 }
 
 export interface IApiRes<T> {

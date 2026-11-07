@@ -69,7 +69,7 @@ export default function CreateAppDialog({ open, onClose, onSuccess }: TProps) {
           anchorOrigin: { horizontal: "left", vertical: "bottom" },
         });
       } finally {
-        setCreating(true);
+        setCreating(false);
       }
     },
   });

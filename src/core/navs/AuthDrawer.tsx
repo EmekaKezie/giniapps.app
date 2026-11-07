@@ -1,14 +1,9 @@
-import {
-  Box,
-  Drawer,
-  Typography,
-  alpha,
-  useTheme,
-  Stack,
-  Divider,
-} from "@mui/material";
-import { Token } from "@mui/icons-material";
-import AuthDrawerMenu from "./AuthDrawerMenu";
+import { Box, Divider, Drawer, IconButton, Stack, Tooltip } from "@mui/material";
+import { AppsOutlined } from "@mui/icons-material";
+import { useNavigate } from "react-router-dom";
+import AuthDrawerMenu, { AuthDrawerFooterMenu } from "./AuthDrawerMenu";
+import AppSwitcher from "./AppSwitcher";
+import BrandMark from "./BrandMark";
 import UserMenu from "./UserMenu";
 
 type TProps = {
@@ -18,13 +13,10 @@ type TProps = {
   onClose: () => void;
 };
 
-export default function AuthDrawer({
-  open,
-  width,
-  smallScreen,
-  onClose,
-}: TProps) {
-  const theme = useTheme();
+export default function AuthDrawer({ open, width, smallScreen, onClose }: TProps) {
+  const navigate = useNavigate();
+  // close the temporary drawer on mobile after picking a page
+  const onNavigate = smallScreen ? onClose : undefined;
 
   return (
     <Drawer
@@ -38,56 +30,32 @@ export default function AuthDrawer({
             boxSizing: "border-box",
             bgcolor: "background.default",
             borderRight: "1px solid",
-            //border:0,
             borderColor: "divider",
             display: "flex",
             flexDirection: "column",
-            
           },
         },
       }}
-      sx={{
-        width: open ? width : 0,
-        flexShrink: 0,
-      }}>
-      {/* 1. BRAND LOGO SECTION */}
-      <Box sx={{ p: 3 }}>
-        <Stack direction="row" spacing={1.5} alignItems="center">
-          <Box
-            sx={{
-              width: 32,
-              height: 32,
-              borderRadius: 1.5,
-              bgcolor: "primary.main",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              boxShadow: `0 4px 12px ${alpha(theme.palette.primary.main, 0.3)}`,
-            }}>
-            <Token sx={{ color: "white", fontSize: 20 }} />
-          </Box>
-          <Typography
-            variant="h6"
-            sx={{
-              fontWeight: 900,
-              letterSpacing: "-0.02em",
-              color: "text.primary",
-              fontSize: "1.25rem",
-            }}>
-            Ginimeg Apps
-          </Typography>
-        </Stack>
+      sx={{ width: open ? width : 0, flexShrink: 0 }}>
+      {/* Brand + back to console */}
+      <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ px: 2.5, pt: 2.5, pb: 2 }}>
+        <BrandMark />
+        <Tooltip title="All apps">
+          <IconButton size="small" onClick={() => navigate("/apps")}>
+            <AppsOutlined fontSize="small" />
+          </IconButton>
+        </Tooltip>
+      </Stack>
+
+      {/* Current app + switcher */}
+      <AppSwitcher />
+
+      {/* App-scoped navigation */}
+      <Box sx={{ flexGrow: 1, overflowY: "auto", mt: 1 }}>
+        <AuthDrawerMenu onNavigate={onNavigate} />
       </Box>
 
-      {/* 2. COMPANY SWITCHER SECTION */}
-      {/* <WorkspaceSwitch width={width} /> */}
-
-      {/* 3. NAVIGATION MENU (Scrollable) */}
-      <Box sx={{ flexGrow: 1, overflowY: "auto", px: 1, mt: 1 }}>
-        <AuthDrawerMenu />
-      </Box>
-
-      {/* 4. USER PROFILE SECTION (Fixed at Bottom) */}
+      <AuthDrawerFooterMenu onNavigate={onNavigate} />
       <Divider sx={{ mx: 2, opacity: 0.6 }} />
       <UserMenu />
     </Drawer>
